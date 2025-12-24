@@ -1,0 +1,12 @@
+[Unit]
+Description=YTWL GPS Server
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/var/www/YTWL-GPS-Speed
+ExecStart=/var/www/YTWL-GPS-Speed/venv/bin/gunicorn --bind 127.0.0.1:8000 app:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

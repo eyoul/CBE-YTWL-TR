@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Driver Assignments{% endblock %}
+{% block content %}
+<div class="card">
+    <h2><i class="fas fa-link"></i> Driver Assignments</h2>
+    <form method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <select name="imei" required>
+            <option value="">Select Vehicle</option>
+            {% for v in vehicles %}
+            <option value="{{v[0]}}">{{v[1]}} ({{v[0]}})</option>
+            {% endfor %}
+        </select>
+        <select name="driver_id" required>
+            <option value="">Select Driver</option>
+            {% for d in drivers %}
+            <option value="{{d[0]}}">{{d[1]}} ({{d[2]}})</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn" style="align-self: end;">
+            <i class="fas fa-link"></i> Assign Driver
+        </button>
+    </form>
+    
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th><i class="fas fa-microchip"></i> Vehicle IMEI</th>
+                    <th><i class="fas fa-id-card"></i> License Plate</th>
+                    <th><i class="fas fa-user"></i> Driver</th>
+                    <th><i class="fas fa-phone"></i> Phone</th>
+                    <th><i class="fas fa-cog"></i> Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in assignments %}
+                <tr>
+                    <td><code>{{a[0]}}</code></td>
+                    <td><strong>{{a[1]}}</strong></td>
+                    <td>{{a[2]}}</td>
+                    <td><a href="tel:{{a[3]}}" style="color: #4299e1;">{{a[3]}}</a></td>
+                    <td>
+                        <form method="post" style="display:inline;">
+                            <input type="hidden" name="unassign" value="{{a[0]}}">
+                            <button type="submit" class="btn" style="background: #e53e3e; padding: 0.5rem 1rem; font-size: 0.875rem;">
+                                <i class="fas fa-unlink"></i> Unassign
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Drivers{% endblock %}
+{% block content %}
+<div class="card">
+    <h2><i class="fas fa-users"></i> Driver Management</h2>
+    <form method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <input name="name" placeholder="Driver Name" required>
+        <input name="phone" placeholder="Phone Number">
+        <button type="submit" class="btn" style="align-self: end;">
+            <i class="fas fa-user-plus"></i> Add Driver
+        </button>
+    </form>
+    
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th><i class="fas fa-user"></i> Name</th>
+                    <th><i class="fas fa-phone"></i> Phone</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in drivers %}
+                <tr>
+                    <td><strong>{{d[1]}}</strong></td>
+                    <td><a href="tel:{{d[2]}}" style="color: #4299e1;">{{d[2]}}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
