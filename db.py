@@ -125,18 +125,15 @@ def violation_count(imei, minutes=60):
 def list_vehicles():
     db = get_db()
     c = db.cursor()
-    c.execute("SELECT imei, plate, speed_limit FROM vehicles")
+    c.execute("SELECT name, imei, plate, speed_limit FROM vehicles")
     rows = c.fetchall()
     db.close()
     return rows
 
-def add_vehicle(imei, plate, limit):
+def add_vehicle(name, imei, plate, limit):
     db = get_db()
     c = db.cursor()
-    c.execute(
-        "INSERT OR REPLACE INTO vehicles VALUES (?, ?, ?)",
-        (imei, plate, limit)
-    )
+    c.execute("INSERT INTO vehicles (name, imei, plate, speed_limit) VALUES (?, ?, ?, ?)", (name, imei, plate, limit))
     db.commit()
     db.close()
 

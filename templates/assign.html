@@ -7,7 +7,7 @@
         <select name="imei" required>
             <option value="">Select Vehicle</option>
             {% for v in vehicles %}
-            <option value="{{v[0]}}">{{v[1]}} ({{v[0]}})</option>
+            <option value="{{v[1]}}">{{v[0]}} ({{v[1]}})</option>
             {% endfor %}
         </select>
         <select name="driver_id" required>

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request, redirect
 import threading
+import sqlite3
 from listener import start_server
 from db import init_db, get_latest, get_db, list_vehicles, add_vehicle, list_drivers, add_driver, list_assignments, assign_driver, unassign_driver
 from config import WEB_PORT
@@ -47,12 +48,19 @@ def push_location(data):
 @app.route("/vehicles", methods=["GET", "POST"])
 def vehicles():
     if request.method == "POST":
-        add_vehicle(
-            request.form["name"],
-            request.form["imei"],
-            request.form["plate"],
-            request.form["speed_limit"]
-        )
+        try:
+            add_vehicle(
+                request.form["name"],
+                request.form["imei"],
+                request.form["plate"],
+                request.form["speed_limit"]
+            )
+        except sqlite3.IntegrityError:
+            return render_template(
+                "vehicles.html",
+                vehicles=list_vehicles(),
+                error="Vehicle with this IMEI already exists!"
+            )
         return redirect("/vehicles")
 
     return render_template(
