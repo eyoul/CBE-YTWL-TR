@@ -1,2 +1,7 @@
 .venv/
 __pycache__/
+gps.db
+*.log
+*.db
+*.sqlite3
+
