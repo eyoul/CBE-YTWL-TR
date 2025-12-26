@@ -10,6 +10,13 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "ytwl-secret"
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+from listener import start_server, init_socketio
+
+# Pass socketio instance to listener
+init_socketio(socketio)
+
+# Start listener in a background thread
+threading.Thread(target=start_server, daemon=True).start()
 @app.route("/")
 def home():
     return render_template("map.html")

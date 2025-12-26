@@ -12,14 +12,17 @@
     <div id="map"></div>
 </div>
 
+<div id="alert" style="position:absolute;top:120px;right:20px;background:#ff4d4d;color:white;padding:10px;border-radius:8px;display:none;z-index:1000;box-shadow:0 4px 12px rgba(255,77,77,0.3);"></div>
+<div id="map"></div>
+
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-// Initialize map
 const map = L.map("map").setView([9.03, 38.74], 6);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
 const bounds = L.latLngBounds();
 const markers = {};
+const socket = io(); // Connect to Flask SocketIO
 
 socket.on("gps_update", data => {
     if (!markers[data.imei]) {
@@ -30,38 +33,30 @@ socket.on("gps_update", data => {
             fillOpacity: 0.7
         }).addTo(map)
         .bindPopup(`
-            <div style="font-family: 'Segoe UI', sans-serif;">
-                <strong>IMEI:</strong> ${data.imei}<br>
-                <strong>Speed:</strong> ${data.speed} km/h<br>
-                <strong>Status:</strong> <span style="color: ${data.overspeed ? 'red' : 'green'};">${data.overspeed ? 'OVERSPEED' : 'Normal'}</span>
-            </div>
+            <strong>IMEI:</strong> ${data.imei}<br>
+            <strong>Speed:</strong> ${data.speed} km/h<br>
+            <strong>Status:</strong> <span style="color:${data.overspeed?'red':'green'}">${data.overspeed?'OVERSPEED':'Normal'}</span>
         `);
     } else {
         markers[data.imei].setLatLng([data.lat, data.lon])
-            .setStyle({
-                color: data.overspeed ? 'red' : 'green',
-                fillColor: data.overspeed ? '#ff4d4d' : '#4ade80'
-            });
+            .setStyle({ color: data.overspeed?'red':'green', fillColor:data.overspeed?'#ff4d4d':'#4ade80' });
         markers[data.imei].getPopup().setContent(`
-            <div style="font-family: 'Segoe UI', sans-serif;">
-                <strong>IMEI:</strong> ${data.imei}<br>
-                <strong>Speed:</strong> ${data.speed} km/h<br>
-                <strong>Status:</strong> <span style="color: ${data.overspeed ? 'red' : 'green'};">${data.overspeed ? 'OVERSPEED' : 'Normal'}</span>
-            </div>
+            <strong>IMEI:</strong> ${data.imei}<br>
+            <strong>Speed:</strong> ${data.speed} km/h<br>
+            <strong>Status:</strong> <span style="color:${data.overspeed?'red':'green'}">${data.overspeed?'OVERSPEED':'Normal'}</span>
         `);
     }
 
-    // Auto-center map on device
     bounds.extend([data.lat, data.lon]);
-    map.fitBounds(bounds, { padding: [50, 50] });
+    map.fitBounds(bounds,{padding:[50,50]});
 
-    // Show overspeed alert
-    if (data.overspeed) {
+    if(data.overspeed){
         const alertDiv = document.getElementById("alert");
-        alertDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> IMEI ${data.imei} overspeeding: ${data.speed} km/h`;
-        alertDiv.style.display = "block";
-        setTimeout(() => alertDiv.style.display = "none", 5000);
+        alertDiv.innerHTML = `⚠️ IMEI ${data.imei} overspeeding: ${data.speed} km/h`;
+        alertDiv.style.display="block";
+        setTimeout(()=>alertDiv.style.display="none",5000);
     }
 });
 </script>
+
 {% endblock %}

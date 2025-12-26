@@ -4,16 +4,22 @@ def bytes_to_imei(data):
     imei_bytes = data[4:12]
     imei = ""
     for b in imei_bytes:
-        imei += f"{b >> 4}{b & 0x0F}"
-    return imei.strip("f")
+        high = b >> 4
+        low = b & 0x0F
+        if high <= 9:
+            imei += str(high)
+        if low <= 9:
+            imei += str(low)
+    return imei
 
 def parse_location_packet(data):
     # Latitude & Longitude (4 bytes each)
     lat_raw = struct.unpack(">I", data[11:15])[0]
     lon_raw = struct.unpack(">I", data[15:19])[0]
 
-    latitude = lat_raw / 30000 / 60
-    longitude = lon_raw / 30000 / 60
+    # GT06 coordinate conversion: divide by 1000000.0 for degrees
+    latitude = lat_raw / 1000000.0
+    longitude = lon_raw / 1000000.0
 
     speed = data[19]  # km/h
 
